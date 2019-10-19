@@ -6,35 +6,34 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+var levelToSeverityMap = map[zapcore.Level]string{
+	zapcore.DebugLevel:  "DEBUG",
+	zapcore.InfoLevel:   "INFO",
+	zapcore.WarnLevel:   "WARNING",
+	zapcore.ErrorLevel:  "ERROR",
+	zapcore.DPanicLevel: "CRITICAL",
+	zapcore.PanicLevel:  "ALERT",
+	zapcore.FatalLevel:  "EMERGENCY",
+}
+
+func levelEncoder(l zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
+	if value, ok := levelToSeverityMap[l]; ok {
+		enc.AppendString(value)
+	}
+}
+
 func defaultConfig() zapcore.EncoderConfig {
 	return zapcore.EncoderConfig{
 		CallerKey:      "caller",
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
-		EncodeLevel: func(l zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
-			switch l {
-			case zapcore.DebugLevel:
-				enc.AppendString("DEBUG")
-			case zapcore.InfoLevel:
-				enc.AppendString("INFO")
-			case zapcore.WarnLevel:
-				enc.AppendString("WARNING")
-			case zapcore.ErrorLevel:
-				enc.AppendString("ERROR")
-			case zapcore.DPanicLevel:
-				enc.AppendString("CRITICAL")
-			case zapcore.PanicLevel:
-				enc.AppendString("ALERT")
-			case zapcore.FatalLevel:
-				enc.AppendString("EMERGENCY")
-			}
-		},
-		EncodeTime: zapcore.ISO8601TimeEncoder,
-		LevelKey:   "severity",
-		LineEnding: zapcore.DefaultLineEnding,
-		MessageKey: "message",
-		NameKey:    "logger",
-		TimeKey:    "timestamp",
+		EncodeLevel:    levelEncoder,
+		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		LevelKey:       "severity",
+		LineEnding:     zapcore.DefaultLineEnding,
+		MessageKey:     "message",
+		NameKey:        "logger",
+		TimeKey:        "timestamp",
 	}
 }
 
