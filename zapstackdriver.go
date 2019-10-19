@@ -2,16 +2,21 @@ package zapstackdriver
 
 import (
 	"io"
+	"os"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
+func NewProduction(options ...zap.Option) (*zap.Logger, error) {
+	stdoutOption := NewCore(os.Stdout)
+	options = append([]zap.Option{stdoutOption}, options...)
+	return zap.NewProduction(options...)
+}
+
 func NewCore(w io.Writer) zap.Option {
 	return zap.WrapCore(func(core zapcore.Core) zapcore.Core {
 		return zapcore.NewCore(
-			// ~~https://cloud.google.com/error-reporting/docs/formatting-error-messages~~
-			// https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry
 			NewEncoder(),
 			zapcore.AddSync(w),
 			core,
