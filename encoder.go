@@ -24,8 +24,6 @@ func levelEncoder(l zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
 
 func defaultConfig() zapcore.EncoderConfig {
 	return zapcore.EncoderConfig{
-		CallerKey:      "caller",
-		EncodeCaller:   zapcore.ShortCallerEncoder,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeLevel:    levelEncoder,
 		EncodeTime:     zapcore.ISO8601TimeEncoder,
