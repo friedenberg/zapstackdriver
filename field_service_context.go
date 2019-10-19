@@ -23,7 +23,7 @@ func (s serviceContext) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	return nil
 }
 
-func WithContext(service string, version string) zap.Option {
+func WithServiceContext(service string, version string) zap.Option {
 	serviceCtx := serviceContext{
 		service: service,
 		version: version,
