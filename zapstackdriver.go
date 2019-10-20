@@ -1,25 +1,30 @@
 package zapstackdriver
 
 import (
-	"io"
-	"os"
-
+	"github.com/hashicorp/go-multierror"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
-func NewProduction(options ...zap.Option) (*zap.Logger, error) {
-	stdoutOption := NewCore(os.Stdout)
-	options = append([]zap.Option{stdoutOption}, options...)
-	return zap.NewProduction(options...)
-}
+func NewConfig(initialFields ...validatedField) (*Config, error) {
+	var errors *multierror.Error
 
-func NewCore(w io.Writer) zap.Option {
-	return zap.WrapCore(func(core zapcore.Core) zapcore.Core {
-		return zapcore.NewCore(
-			NewEncoder(),
-			zapcore.AddSync(w),
-			core,
-		)
-	})
+	for _, field := range initialFields {
+		errors = multierror.Append(errors, field.validate())
+	}
+
+	config := zap.Config{
+		Level:         zap.NewAtomicLevelAt(zap.InfoLevel),
+		Development:   false,
+		DisableCaller: true,
+		Sampling: &zap.SamplingConfig{
+			Initial:    100,
+			Thereafter: 100,
+		},
+		Encoding:         "json",
+		EncoderConfig:    NewProductionEncoderConfig(),
+		OutputPaths:      []string{"stdout"},
+		ErrorOutputPaths: []string{"stdout"},
+	}
+
+	return &Config{Config: config}, errors.ErrorOrNil()
 }
