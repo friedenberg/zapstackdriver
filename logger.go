@@ -20,6 +20,7 @@ type Logger struct {
 	*zap.SugaredLogger
 	errorContextRequest *HttpRequest
 	errorContextUser    string
+	sourceReferences    []FieldSourceReference
 }
 
 func (l *Logger) With(args ...interface{}) *Logger {
@@ -71,9 +72,10 @@ func (l *Logger) withErrorContext() *zap.SugaredLogger {
 	caller := l.callerWithAddedOffset(1)
 
 	errorContext := FieldErrorContext{
-		HttpRequest:    l.errorContextRequest,
-		User:           l.errorContextUser,
-		ReportLocation: FieldReportLocation{Caller: caller},
+		HttpRequest:      l.errorContextRequest,
+		User:             l.errorContextUser,
+		ReportLocation:   FieldReportLocation{Caller: caller},
+		SourceReferences: l.sourceReferences,
 	}
 
 	return l.SugaredLogger.With(

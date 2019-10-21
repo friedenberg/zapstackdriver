@@ -1,31 +1,20 @@
 package zapstackdriver
 
 import (
-	"github.com/hashicorp/go-multierror"
 	"go.uber.org/zap"
 )
 
-func NewConfig(initialFields ...validatedField) (*Config, error) {
-	var errors *multierror.Error
+func NewLogger(
+	serviceContext FieldServiceContext,
+	sourceReferences []FieldSourceReference,
+	options ...zap.Option,
+) (*Logger, error) {
+	loggerConfig := NewConfig(serviceContext)
+	logger, err := loggerConfig.Build(sourceReferences, options...)
 
-	for _, field := range initialFields {
-		errors = multierror.Append(errors, field.validate())
+	if err != nil {
+		return nil, err
 	}
 
-	config := zap.Config{
-		Level:             zap.NewAtomicLevelAt(zap.InfoLevel),
-		Development:       false,
-		DisableCaller:     true,
-		DisableStacktrace: true,
-		Sampling: &zap.SamplingConfig{
-			Initial:    100,
-			Thereafter: 100,
-		},
-		Encoding:         "json",
-		EncoderConfig:    NewProductionEncoderConfig(),
-		OutputPaths:      []string{"stdout"},
-		ErrorOutputPaths: []string{"stdout"},
-	}
-
-	return &Config{Config: config}, errors.ErrorOrNil()
+	return logger, nil
 }
