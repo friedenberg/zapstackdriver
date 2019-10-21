@@ -140,22 +140,22 @@ func (l *Logger) Fatal(args ...interface{}) {
 }
 
 func (l *Logger) Errorf(template string, args ...interface{}) {
-	args[0] = l.appendStacktrace(args[0], 1)
+	template = l.appendStacktraceString(template, 1)
 	l.withErrorContext().Errorf(template, args...)
 }
 
 func (l *Logger) DPanicf(template string, args ...interface{}) {
-	args[0] = l.appendStacktrace(args[0], 1)
+	template = l.appendStacktraceString(template, 1)
 	l.withErrorContext().DPanicf(template, args...)
 }
 
 func (l *Logger) Panicf(template string, args ...interface{}) {
-	args[0] = l.appendStacktrace(args[0], 1)
+	template = l.appendStacktraceString(template, 1)
 	l.withErrorContext().Panicf(template, args...)
 }
 
 func (l *Logger) Fatalf(template string, args ...interface{}) {
-	args[0] = l.appendStacktrace(args[0], 1)
+	template = l.appendStacktraceString(template, 1)
 	l.withErrorContext().Fatalf(template, args...)
 }
 
