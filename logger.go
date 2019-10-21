@@ -2,6 +2,7 @@ package zapstackdriver
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"runtime"
 
@@ -176,4 +177,8 @@ func (l *Logger) Panicw(msg string, keysAndValues ...interface{}) {
 func (l *Logger) Fatalw(msg string, keysAndValues ...interface{}) {
 	msg = l.appendStacktraceString(msg, 1)
 	l.withErrorContext().Fatalw(msg, keysAndValues...)
+}
+
+func (l *Logger) StdLogger() *log.Logger {
+	return zap.NewStdLog(l.SugaredLogger.Desugar())
 }
