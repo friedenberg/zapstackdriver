@@ -47,7 +47,7 @@ func (l *Logger) WithCallerSkipOffset(offset int) *Logger {
 func (l *Logger) WithRequest(request *http.Request) *Logger {
 	return &Logger{
 		SugaredLogger:       l.SugaredLogger,
-		callerSkipOffset:    offset,
+		callerSkipOffset:    l.callerSkipOffset,
 		errorContextRequest: &HttpRequest{Request: request},
 		errorContextUser:    l.errorContextUser,
 		sourceReferences:    l.sourceReferences,
@@ -57,8 +57,8 @@ func (l *Logger) WithRequest(request *http.Request) *Logger {
 func (l *Logger) WithUser(user string) *Logger {
 	return &Logger{
 		SugaredLogger:       l.SugaredLogger,
-		callerSkipOffset:    offset,
-		errorContextRequest: &HttpRequest{Request: request},
+		callerSkipOffset:    l.callerSkipOffset,
+		errorContextRequest: l.errorContextRequest,
 		errorContextUser:    user,
 		sourceReferences:    l.sourceReferences,
 	}
