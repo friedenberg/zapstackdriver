@@ -1,36 +1,18 @@
 package zapstackdriver
 
 import (
-	"errors"
-
-	"github.com/hashicorp/go-multierror"
 	"go.uber.org/zap/zapcore"
 )
 
 type FieldErrorContext struct {
-	HttpRequest    *HttpRequest
-	User           string
-	ReportLocation *FieldReportLocation
-}
-
-func (c *FieldErrorContext) validate() error {
-	var result *multierror.Error
-
-	if c.ReportLocation == nil {
-		result = multierror.Append(result, errors.New("report location is required, but was empty"))
-	}
-
-	return result.ErrorOrNil()
+	HttpRequest      *HttpRequest
+	User             string
+	ReportLocation   FieldReportLocation
+	SourceReferences []FieldSourceReference
 }
 
 //https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorContext#SourceLocation
 func (c *FieldErrorContext) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	err := c.validate()
-
-	if err != nil {
-		return err
-	}
-
 	if c.HttpRequest != nil {
 		enc.AddObject("httpRequest", c.HttpRequest)
 	}
@@ -39,8 +21,18 @@ func (c *FieldErrorContext) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 		enc.AddString("user", c.User)
 	}
 
-	if c.ReportLocation != nil {
-		enc.AddObject("reportLocation", c.ReportLocation)
+	enc.AddObject("reportLocation", c.ReportLocation)
+
+	if c.SourceReferences != nil && len(c.SourceReferences) > 0 {
+		iterator := func(enc zapcore.ArrayEncoder) error {
+			for _, sourceReference := range c.SourceReferences {
+				enc.AppendObject(sourceReference)
+			}
+
+			return nil
+		}
+
+		enc.AddArray("sourceReferences", zapcore.ArrayMarshalerFunc(iterator))
 	}
 
 	return nil

@@ -30,6 +30,5 @@ func NewProductionEncoderConfig() zapcore.EncoderConfig {
 		MessageKey:     "message",
 		NameKey:        "logger",
 		TimeKey:        "timestamp",
-		StacktraceKey:  "stacktrace",
 	}
 }

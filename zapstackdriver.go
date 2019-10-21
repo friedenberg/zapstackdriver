@@ -13,9 +13,10 @@ func NewConfig(initialFields ...validatedField) (*Config, error) {
 	}
 
 	config := zap.Config{
-		Level:         zap.NewAtomicLevelAt(zap.InfoLevel),
-		Development:   false,
-		DisableCaller: true,
+		Level:             zap.NewAtomicLevelAt(zap.InfoLevel),
+		Development:       false,
+		DisableCaller:     true,
+		DisableStacktrace: true,
 		Sampling: &zap.SamplingConfig{
 			Initial:    100,
 			Thereafter: 100,

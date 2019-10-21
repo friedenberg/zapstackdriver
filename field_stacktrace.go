@@ -1,17 +1,51 @@
 package zapstackdriver
 
 import (
+	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
+
+	"go.uber.org/zap/buffer"
 )
 
 var (
+	_pool           = buffer.NewPool()
 	_stacktracePool = sync.Pool{
 		New: func() interface{} {
 			return newProgramCounters(64)
 		},
 	}
+
+	_, b, _, _ = runtime.Caller(0)
+	basepath   = filepath.Dir(b)
 )
+
+func MakeStacktrace(offset int, filter StacktraceFilter, formatter StacktraceFormatter) string {
+	pc := getProgramCounters(offset + 1)
+
+	buffer := _pool.Get()
+	defer buffer.Free()
+
+	field := FieldStacktrace{
+		callers:   pc.pcs,
+		writer:    buffer,
+		filter:    filter,
+		formatter: formatter,
+	}
+
+	field.Format()
+
+	return buffer.String()
+}
+
+func MakeDefaultStacktrace(offset int) string {
+	return MakeStacktrace(
+		offset+1,
+		&StacktraceDefaultFilter{},
+		&StacktraceDefaultFormatter{},
+	)
+}
 
 func getProgramCounters(offset int) *programCounters {
 	programCounters := _stacktracePool.Get().(*programCounters)
@@ -44,39 +78,78 @@ func newProgramCounters(size int) *programCounters {
 type bufferWriter interface {
 	AppendBool(bool)
 	AppendByte(byte)
-	AppendFloat(float64, bitSize int)
+	AppendFloat(float64, int)
 	AppendInt(int64)
 	AppendString(string)
 	AppendUint(uint64)
 }
 
-type stackFrameFilter interface {
+type StacktraceFilter interface {
 	ShouldSkip(runtime.Frame) bool
 }
 
-func takeStacktrace(writer bufferWriter, filter stackFrameFilter, callers []uintptr) {
+type StacktraceFormatter interface {
+	BeginFormatting(writer bufferWriter)
+	FormatFrame(writer bufferWriter, frame runtime.Frame, index int)
+	JoinFrames(writer bufferWriter, firstIndex int, secondIndex int)
+	EndFormatting(writer bufferWriter, index int)
+}
+
+type FieldStacktrace struct {
+	callers   []uintptr
+	writer    bufferWriter
+	filter    StacktraceFilter
+	formatter StacktraceFormatter
+}
+
+func (f *FieldStacktrace) Format() {
 	i := 0
 	shouldSkipFrame := true
-	frames := runtime.CallersFrames(callers)
+	frames := runtime.CallersFrames(f.callers)
+
+	f.formatter.BeginFormatting(f.writer)
 
 	for frame, more := frames.Next(); more; frame, more = frames.Next() {
-		if shouldSkipFrame && filter.ShouldSkip(frame) {
+		if shouldSkipFrame && f.filter.ShouldSkip(frame) {
 			continue
 		} else {
 			shouldSkipFrame = false
 		}
 
-		if i != 0 {
-			writer.AppendByte('\n')
-		}
-
+		f.formatter.FormatFrame(f.writer, frame, i)
+		oldIndex := i
 		i++
 
-		writer.AppendString(frame.Function)
-		writer.AppendByte('\n')
-		writer.AppendByte('\t')
-		writer.AppendString(frame.File)
-		writer.AppendByte(':')
-		writer.AppendInt(int64(frame.Line))
+		if more {
+			f.formatter.JoinFrames(f.writer, oldIndex, i)
+		}
 	}
+
+	f.formatter.EndFormatting(f.writer, i)
 }
+
+type StacktraceDefaultFilter struct{}
+
+func (f *StacktraceDefaultFilter) ShouldSkip(runtime.Frame) bool {
+	return false
+}
+
+type StacktraceDefaultFormatter struct{}
+
+func (f *StacktraceDefaultFormatter) BeginFormatting(writer bufferWriter) {}
+
+func (f *StacktraceDefaultFormatter) FormatFrame(writer bufferWriter, frame runtime.Frame, index int) {
+	writer.AppendString(" at ")
+	fileWithoutBase := strings.TrimPrefix(frame.File, basepath)
+	writer.AppendString(fileWithoutBase)
+	writer.AppendByte(':')
+	writer.AppendInt(int64(frame.Line))
+	writer.AppendByte(':')
+	writer.AppendInt(int64(frame.Line))
+}
+
+func (f *StacktraceDefaultFormatter) JoinFrames(writer bufferWriter, firstIndex int, secondIndex int) {
+	writer.AppendByte('\n')
+}
+
+func (f *StacktraceDefaultFormatter) EndFormatting(writer bufferWriter, lastIndex int) {}
