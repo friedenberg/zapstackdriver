@@ -18,28 +18,49 @@ const (
 
 type Logger struct {
 	*zap.SugaredLogger
+	callerSkipOffset    int
 	errorContextRequest *HttpRequest
 	errorContextUser    string
 	sourceReferences    []FieldSourceReference
 }
 
 func (l *Logger) With(args ...interface{}) *Logger {
-	return &Logger{SugaredLogger: l.SugaredLogger.With(args...)}
+	return &Logger{
+		SugaredLogger:       l.SugaredLogger.With(args...),
+		callerSkipOffset:    l.callerSkipOffset,
+		errorContextRequest: l.errorContextRequest,
+		errorContextUser:    l.errorContextUser,
+		sourceReferences:    l.sourceReferences,
+	}
+}
+
+func (l *Logger) WithCallerSkipOffset(offset int) *Logger {
+	return &Logger{
+		SugaredLogger:       l.SugaredLogger,
+		callerSkipOffset:    offset,
+		errorContextRequest: l.errorContextRequest,
+		errorContextUser:    l.errorContextUser,
+		sourceReferences:    l.sourceReferences,
+	}
 }
 
 func (l *Logger) WithRequest(request *http.Request) *Logger {
 	return &Logger{
 		SugaredLogger:       l.SugaredLogger,
+		callerSkipOffset:    offset,
 		errorContextRequest: &HttpRequest{Request: request},
 		errorContextUser:    l.errorContextUser,
+		sourceReferences:    l.sourceReferences,
 	}
 }
 
 func (l *Logger) WithUser(user string) *Logger {
 	return &Logger{
 		SugaredLogger:       l.SugaredLogger,
-		errorContextRequest: l.errorContextRequest,
+		callerSkipOffset:    offset,
+		errorContextRequest: &HttpRequest{Request: request},
 		errorContextUser:    user,
+		sourceReferences:    l.sourceReferences,
 	}
 }
 
@@ -50,7 +71,7 @@ func (l *Logger) SetResponseStatusCode(statusCode int) {
 }
 
 func (l *Logger) CallerSkipOffset() int {
-	return defaultCallerSkipOffset
+	return defaultCallerSkipOffset + l.callerSkipOffset
 }
 
 func (l *Logger) callerWithAddedOffset(offset int) Caller {
