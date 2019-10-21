@@ -119,6 +119,14 @@ func (l *Logger) appendStacktrace(v interface{}, offset int) interface{} {
 	return v
 }
 
+func (l *Logger) Debug(args ...interface{}) {
+	l.withNonErrorContext().Debug(args...)
+}
+
+func (l *Logger) Info(args ...interface{}) {
+	l.withNonErrorContext().Info(args...)
+}
+
 func (l *Logger) Error(args ...interface{}) {
 	args[0] = l.appendStacktrace(args[0], 1)
 	l.withErrorContext().Error(args...)
@@ -139,6 +147,14 @@ func (l *Logger) Fatal(args ...interface{}) {
 	l.withErrorContext().Fatal(args...)
 }
 
+func (l *Logger) Debugf(template string, args ...interface{}) {
+	l.withNonErrorContext().Debugf(template, args...)
+}
+
+func (l *Logger) Infof(template string, args ...interface{}) {
+	l.withNonErrorContext().Infof(template, args...)
+}
+
 func (l *Logger) Errorf(template string, args ...interface{}) {
 	template = l.appendStacktraceString(template, 1)
 	l.withErrorContext().Errorf(template, args...)
@@ -157,6 +173,14 @@ func (l *Logger) Panicf(template string, args ...interface{}) {
 func (l *Logger) Fatalf(template string, args ...interface{}) {
 	template = l.appendStacktraceString(template, 1)
 	l.withErrorContext().Fatalf(template, args...)
+}
+
+func (l *Logger) Debugw(msg string, keysAndValues ...interface{}) {
+	l.withNonErrorContext().Debugw(msg, keysAndValues...)
+}
+
+func (l *Logger) Infow(msg string, keysAndValues ...interface{}) {
+	l.withNonErrorContext().Infow(msg, keysAndValues...)
 }
 
 func (l *Logger) Errorw(msg string, keysAndValues ...interface{}) {
