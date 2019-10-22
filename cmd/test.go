@@ -1,4 +1,4 @@
-package main
+package zapstackdriver_test
 
 import (
 	"log"
@@ -6,7 +6,7 @@ import (
 	"github.com/friedenberg/zapstackdriver"
 )
 
-func main() {
+func ExampleNewLogger() {
 	logger, err := zapstackdriver.NewLogger(
 		zapstackdriver.FieldServiceContext{
 			Service: "example",

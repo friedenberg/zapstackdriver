@@ -81,7 +81,6 @@ func (l *Logger) callerWithAddedOffset(offset int) Caller {
 }
 
 func (l *Logger) withNonErrorContext() *zap.SugaredLogger {
-
 	caller := l.callerWithAddedOffset(1)
 	fieldSourceLocation := FieldSourceLocation{Caller: caller}
 
