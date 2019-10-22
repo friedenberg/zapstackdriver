@@ -49,7 +49,7 @@ func (l *Logger) WithRequest(request *http.Request) *Logger {
 	return &Logger{
 		SugaredLogger:       l.SugaredLogger,
 		callerSkipOffset:    l.callerSkipOffset,
-		errorContextRequest: &FieldHttpRequest{Request: request},
+		errorContextRequest: &FieldHttpRequest{Request: *request},
 		errorContextUser:    l.errorContextUser,
 		sourceReferences:    l.sourceReferences,
 	}
