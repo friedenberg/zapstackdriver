@@ -7,12 +7,12 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type HttpRequest struct {
+type FieldHttpRequest struct {
 	*http.Request
 	ResponseStatusCode int
 }
 
-func (r HttpRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+func (r FieldHttpRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	if r.Request == nil {
 		return errors.New("http request context is nil")
 	}

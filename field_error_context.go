@@ -5,14 +5,14 @@ import (
 )
 
 type FieldErrorContext struct {
-	HttpRequest      *HttpRequest
+	HttpRequest      *FieldHttpRequest
 	User             string
 	ReportLocation   FieldReportLocation
 	SourceReferences []FieldSourceReference
 }
 
 //https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorContext#SourceLocation
-func (c *FieldErrorContext) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+func (c FieldErrorContext) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	if c.HttpRequest != nil {
 		enc.AddObject("httpRequest", c.HttpRequest)
 	}
