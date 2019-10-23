@@ -12,20 +12,20 @@ type FieldHttpRequest struct {
 }
 
 func (r FieldHttpRequest) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	enc.AddString("method", r.Method)
-	enc.AddString("url", r.URL.String())
-	enc.AddString("remoteIp", r.RemoteAddr)
+	enc.AddString(SDKeyErrorContextHttpRequestMethod, r.Method)
+	enc.AddString(SDKeyErrorContextHttpRequestUrl, r.URL.String())
+	enc.AddString(SDKeyErrorContextHttpRequestRemoteIp, r.RemoteAddr)
 
 	if r.UserAgent() != "" {
-		enc.AddString("userAgent", r.UserAgent())
+		enc.AddString(SDKeyErrorContextHttpRequestUserAgent, r.UserAgent())
 	}
 
 	if r.Referer() != "" {
-		enc.AddString("referrer", r.Referer())
+		enc.AddString(SDKeyErrorContextHttpRequestReferrer, r.Referer())
 	}
 
 	if http.StatusText(r.ResponseStatusCode) != "" {
-		enc.AddInt("responseStatusCode", r.ResponseStatusCode)
+		enc.AddInt(SDKeyErrorContextHttpRequestResponseStatusCode, r.ResponseStatusCode)
 	}
 
 	return nil

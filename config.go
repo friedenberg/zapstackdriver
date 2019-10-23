@@ -31,7 +31,9 @@ func NewConfig(serviceContext FieldServiceContext) *Config {
 		EncoderConfig:     NewProductionEncoderConfig(),
 		OutputPaths:       []string{"stdout"},
 		ErrorOutputPaths:  []string{"stdout"},
-		InitialFields:     map[string]interface{}{"serviceContext": serviceContext},
+		InitialFields: map[string]interface{}{
+			SDKeyServiceContext: serviceContext,
+		},
 	}
 
 	return &Config{Config: config}

@@ -11,10 +11,7 @@ import (
 )
 
 const (
-	defaultCallerSkipOffset      = 2
-	stackdriverKeySourceLocation = "sourceLocation"
-	stackdriverKeyType           = "@type"
-	stackdriverValueErrorType    = "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent"
+	defaultCallerSkipOffset = 2
 )
 
 type Logger struct {
@@ -84,7 +81,7 @@ func (l *Logger) withNonErrorContext() *zap.SugaredLogger {
 	caller := l.callerWithAddedOffset(1)
 	fieldSourceLocation := FieldSourceLocation{Caller: caller}
 
-	return l.SugaredLogger.With(stackdriverKeySourceLocation, fieldSourceLocation)
+	return l.SugaredLogger.With(SDKeySourceLocation, fieldSourceLocation)
 }
 
 func (l *Logger) withErrorContext() *zap.SugaredLogger {
@@ -100,7 +97,7 @@ func (l *Logger) withErrorContext() *zap.SugaredLogger {
 	}
 
 	return l.SugaredLogger.With(
-		stackdriverKeyType, stackdriverValueErrorType,
+		SDKeyType, SDValueErrorType,
 		errorEntryKeyContext, errorContext,
 	)
 }

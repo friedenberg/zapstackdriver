@@ -34,8 +34,8 @@ func (f FieldSourceReference) MarshalLogObject(enc zapcore.ObjectEncoder) error 
 		return err
 	}
 
-	enc.AddString("repository", f.Repository)
-	enc.AddString("revisionId", f.RevisionId)
+	enc.AddString(SDKeyErrorContextSourceReferencesRepository, f.Repository)
+	enc.AddString(SDKeyErrorContextSourceReferencesRevisionId, f.RevisionId)
 
 	return nil
 }

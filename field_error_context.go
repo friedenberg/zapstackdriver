@@ -14,14 +14,23 @@ type FieldErrorContext struct {
 //https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorContext#SourceLocation
 func (c FieldErrorContext) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	if c.HttpRequest != nil {
-		enc.AddObject("httpRequest", c.HttpRequest)
+		enc.AddObject(
+			SDKeyErrorContextHttpRequest,
+			c.HttpRequest,
+		)
 	}
 
 	if c.User != "" {
-		enc.AddString("user", c.User)
+		enc.AddString(
+			SDKeyErrorContextUser,
+			c.User,
+		)
 	}
 
-	enc.AddObject("reportLocation", c.ReportLocation)
+	enc.AddObject(
+		SDKeyErrorContextReportLocation,
+		c.ReportLocation,
+	)
 
 	if c.SourceReferences != nil && len(c.SourceReferences) > 0 {
 		iterator := func(enc zapcore.ArrayEncoder) error {
@@ -32,7 +41,10 @@ func (c FieldErrorContext) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 			return nil
 		}
 
-		enc.AddArray("sourceReferences", zapcore.ArrayMarshalerFunc(iterator))
+		enc.AddArray(
+			SDKeyErrorContextSourceReferences,
+			zapcore.ArrayMarshalerFunc(iterator),
+		)
 	}
 
 	return nil
