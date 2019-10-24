@@ -17,7 +17,7 @@ const (
 type Logger struct {
 	*zap.SugaredLogger
 	callerSkipOffset    int
-	errorContextRequest *FieldHttpRequest
+	errorContextRequest *FieldHTTPRequest
 	errorContextUser    string
 	sourceReferences    []FieldSourceReference
 }
@@ -46,7 +46,7 @@ func (l *Logger) WithRequest(request *http.Request) *Logger {
 	return &Logger{
 		SugaredLogger:       l.SugaredLogger,
 		callerSkipOffset:    l.callerSkipOffset,
-		errorContextRequest: &FieldHttpRequest{Request: *request},
+		errorContextRequest: &FieldHTTPRequest{Request: *request},
 		errorContextUser:    l.errorContextUser,
 		sourceReferences:    l.sourceReferences,
 	}
@@ -90,7 +90,7 @@ func (l *Logger) withErrorContext() *zap.SugaredLogger {
 	caller := l.callerWithAddedOffset(1)
 
 	errorContext := FieldErrorContext{
-		HttpRequest:      l.errorContextRequest,
+		HTTPRequest:      l.errorContextRequest,
 		User:             l.errorContextUser,
 		ReportLocation:   FieldReportLocation{Caller: caller},
 		SourceReferences: l.sourceReferences,

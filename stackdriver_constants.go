@@ -15,17 +15,17 @@ const (
 
 	SDKeyErrorContextSourceReferences           = "sourceReferences"
 	SDKeyErrorContextSourceReferencesRepository = "repository"
-	SDKeyErrorContextSourceReferencesRevisionId = "revisionId"
+	SDKeyErrorContextSourceReferencesRevisionID = "revisionId"
 
 	SDKeyErrorContextUser = "user"
 
-	SDKeyErrorContextHttpRequest                   = "httpRequest"
-	SDKeyErrorContextHttpRequestMethod             = "method"
-	SDKeyErrorContextHttpRequestUrl                = "url"
-	SDKeyErrorContextHttpRequestRemoteIp           = "remoteIp"
-	SDKeyErrorContextHttpRequestUserAgent          = "userAgent"
-	SDKeyErrorContextHttpRequestReferrer           = "referrer"
-	SDKeyErrorContextHttpRequestResponseStatusCode = "responseStatusCode"
+	SDKeyErrorContextHTTPRequest                   = "httpRequest"
+	SDKeyErrorContextHTTPRequestMethod             = "method"
+	SDKeyErrorContextHTTPRequestURL                = "url"
+	SDKeyErrorContextHTTPRequestRemoteIP           = "remoteIp"
+	SDKeyErrorContextHTTPRequestUserAgent          = "userAgent"
+	SDKeyErrorContextHTTPRequestReferrer           = "referrer"
+	SDKeyErrorContextHTTPRequestResponseStatusCode = "responseStatusCode"
 
 	SDKeyErrorContextReportLocation         = "reportLocation"
 	SDKeyErrorContextReportLocationFilePath = "filePath"

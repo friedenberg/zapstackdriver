@@ -5,7 +5,7 @@ import (
 )
 
 type FieldErrorContext struct {
-	HttpRequest      *FieldHttpRequest
+	HTTPRequest      *FieldHTTPRequest
 	User             string
 	ReportLocation   FieldReportLocation
 	SourceReferences []FieldSourceReference
@@ -13,10 +13,10 @@ type FieldErrorContext struct {
 
 //https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorContext#SourceLocation
 func (c FieldErrorContext) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	if c.HttpRequest != nil {
+	if c.HTTPRequest != nil {
 		enc.AddObject(
-			SDKeyErrorContextHttpRequest,
-			c.HttpRequest,
+			SDKeyErrorContextHTTPRequest,
+			c.HTTPRequest,
 		)
 	}
 
