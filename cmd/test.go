@@ -13,7 +13,7 @@ func ExampleNewLogger() {
 			Version: "1-b",
 		},
 		[]zapstackdriver.FieldSourceReference{
-			zapstackdriver.FieldSourceReference{
+			{
 				Repository: "https://github.com/friedenberg/zapstackdriver",
 				RevisionId: "1-b",
 			},

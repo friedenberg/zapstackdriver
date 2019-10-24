@@ -34,7 +34,7 @@ func getLoggerTestCases() []loggerTestCase {
 				Version: "1.0",
 			},
 			sourceReferences: []zapstackdriver.FieldSourceReference{
-				zapstackdriver.FieldSourceReference{
+				{
 					Repository: "https://github.com/friedenberg/zapstackdriver",
 					RevisionId: "some_sha",
 				},
@@ -65,7 +65,7 @@ func getLoggerTestCases() []loggerTestCase {
 				Version: "1.0",
 			},
 			sourceReferences: []zapstackdriver.FieldSourceReference{
-				zapstackdriver.FieldSourceReference{
+				{
 					Repository: "https://github.com/friedenberg/zapstackdriver",
 					RevisionId: "some_sha",
 				},
